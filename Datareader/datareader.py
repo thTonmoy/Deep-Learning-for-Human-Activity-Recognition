@@ -4,7 +4,7 @@ import sys
 import os
 import h5py
 import pandas as pd
-import simplejson as json
+# import simplejson as json
 import sqlite3
 import copy
 
@@ -118,7 +118,7 @@ class data_reader:
         labels = []
         for i, filename in enumerate(filelist):
             print('Reading file %d of %d' % (i+1, len(filelist)))
-            with open('./Protocol/%s' % filename, 'r') as f:
+            with open('PAMAP2_Dataset/Protocol/%s' % filename, 'r') as f:
                 #print "f",f
                 reader = csv.reader(f, delimiter=' ')
                 for line in reader:
@@ -351,222 +351,222 @@ class data_reader:
 
         return data, idToLabel
 
-# partial code was taken from :https://github.com/IRC-SPHERE/sphere-challenge/blob/master/visualise_data.py
-    def readSphereFiles(self, filelist, cols, labelToId,idToLabel):
-        data = []
-        labels = []
+# # partial code was taken from :https://github.com/IRC-SPHERE/sphere-challenge/blob/master/visualise_data.py
+#     def readSphereFiles(self, filelist, cols, labelToId,idToLabel):
+#         data = []
+#         labels = []
 
-        mapping = {'a_ascend': 0, 'a_descend': 1, 'a_jump': 2, 'a_loadwalk': 3, 'a_walk': 4, 'p_bent': 5, 'p_kneel': 6, 'p_lie': 7, 'p_sit': 8,
-             'p_squat': 9, 'p_stand': 10, 't_bend': 11, 't_kneel_stand': 12, 't_lie_sit': 13, 't_sit_lie': 14, 't_sit_stand': 15, 't_stand_kneel': 16, 
-             't_stand_sit': 17,'t_straighten': 18, 't_turn': 19}
+#         mapping = {'a_ascend': 0, 'a_descend': 1, 'a_jump': 2, 'a_loadwalk': 3, 'a_walk': 4, 'p_bent': 5, 'p_kneel': 6, 'p_lie': 7, 'p_sit': 8,
+#              'p_squat': 9, 'p_stand': 10, 't_bend': 11, 't_kneel_stand': 12, 't_lie_sit': 13, 't_sit_lie': 14, 't_sit_stand': 15, 't_stand_kneel': 16, 
+#              't_stand_sit': 17,'t_straighten': 18, 't_turn': 19}
 
-        # mapping2 = {0:'a_ascend',  1:'a_descend',  2:'a_jump',  3:'a_loadwalk',  4:'a_walk',  5:'p_bent',  6:'p_kneel',  7:'p_lie',  8:'p_sit',
-        #       9:'p_squat',  10:'p_stand',  11:'t_bend',  12:'t_kneel_stand',  13:'t_lie_sit',  14:'t_sit_lie',  15:'t_sit_stand',  16:'t_stand_kneel', 
-        #       17:'t_stand_sit', 18:'t_straighten', 19: 't_turn'}
-        for i, filename in enumerate(filelist):
-            path = './train/%s/'%filename
-            meta_root = './metadata/'
-            video_cols = json.load(open(os.path.join(meta_root, 'video_feature_names.json')))
-            centre_2d = video_cols['centre_2d']
-            bb_2d = video_cols['bb_2d']
-            centre_3d = video_cols['centre_3d']
-            bb_3d = video_cols['bb_3d']
-            print('Reading file %d of %d'%(i+1,len(filelist)))
-            meta = json.load(open(os.path.join(path, 'meta.json')))
-            acceleration_keys = json.load(open(os.path.join(meta_root, 'accelerometer_axes.json')))
-            rssi_keys = json.load(open(os.path.join(meta_root, 'access_point_names.json')))
-            video_names = json.load(open(os.path.join(meta_root, 'video_locations.json')))
-            pir_names = json.load(open(os.path.join(meta_root, 'pir_locations.json')))
-            location_targets = json.load(open(os.path.join(meta_root, 'rooms.json')))
-            activity_targets = json.load(open(os.path.join(meta_root, 'annotations.json')))
+#         # mapping2 = {0:'a_ascend',  1:'a_descend',  2:'a_jump',  3:'a_loadwalk',  4:'a_walk',  5:'p_bent',  6:'p_kneel',  7:'p_lie',  8:'p_sit',
+#         #       9:'p_squat',  10:'p_stand',  11:'t_bend',  12:'t_kneel_stand',  13:'t_lie_sit',  14:'t_sit_lie',  15:'t_sit_stand',  16:'t_stand_kneel', 
+#         #       17:'t_stand_sit', 18:'t_straighten', 19: 't_turn'}
+#         for i, filename in enumerate(filelist):
+#             path = './train/%s/'%filename
+#             meta_root = './metadata/'
+#             video_cols = json.load(open(os.path.join(meta_root, 'video_feature_names.json')))
+#             centre_2d = video_cols['centre_2d']
+#             bb_2d = video_cols['bb_2d']
+#             centre_3d = video_cols['centre_3d']
+#             bb_3d = video_cols['bb_3d']
+#             print('Reading file %d of %d'%(i+1,len(filelist)))
+#             meta = json.load(open(os.path.join(path, 'meta.json')))
+#             acceleration_keys = json.load(open(os.path.join(meta_root, 'accelerometer_axes.json')))
+#             rssi_keys = json.load(open(os.path.join(meta_root, 'access_point_names.json')))
+#             video_names = json.load(open(os.path.join(meta_root, 'video_locations.json')))
+#             pir_names = json.load(open(os.path.join(meta_root, 'pir_locations.json')))
+#             location_targets = json.load(open(os.path.join(meta_root, 'rooms.json')))
+#             activity_targets = json.load(open(os.path.join(meta_root, 'annotations.json')))
             
-            accel = load_wearable(path,acceleration_keys,rssi_keys)
-            vid = load_video(path,video_names)
-            pir = load_environmental(path)
-            annot = load_annotations(path)
-            targ = load_targets(path)
-            # accel = accel.dropna(how='any')
-            # vid = pd.DataFrame(vid.items())
-            # vid = pd.DataFrame.from_dict(orient='index',data = vid)
-            # vid = vid.dropna(how='any')
+#             accel = load_wearable(path,acceleration_keys,rssi_keys)
+#             vid = load_video(path,video_names)
+#             pir = load_environmental(path)
+#             annot = load_annotations(path)
+#             targ = load_targets(path)
+#             # accel = accel.dropna(how='any')
+#             # vid = pd.DataFrame(vid.items())
+#             # vid = pd.DataFrame.from_dict(orient='index',data = vid)
+#             # vid = vid.dropna(how='any')
 
-            #we have read the whole train set for the current file
-            #now we trim off all unlabeled target instances
-            targ = targ.dropna(how='any')
-            #we feel the accelerometer NaN values with zero (mean impute would not make much sense)
-            accel = accel.fillna(0)
-            # print(i)
-            # print(filename)
+#             #we have read the whole train set for the current file
+#             #now we trim off all unlabeled target instances
+#             targ = targ.dropna(how='any')
+#             #we feel the accelerometer NaN values with zero (mean impute would not make much sense)
+#             accel = accel.fillna(0)
+#             # print(i)
+#             # print(filename)
             
-            #we get the target label for each instance, which would be the argmax, of the targe probability distribution
-            targLabel = copy.deepcopy(targ)
-            targLabel.drop(targLabel.columns[[0, 1]], axis=1, inplace=True)
-            #we create a target column, with the corresponding argmax targets
-            targ['target'] = targLabel.idxmax(axis=1)
-            #delete the probability distribution columns
-            for activity in idToLabel:
-            	del targ[activity]
-            # print(targ)
+#             #we get the target label for each instance, which would be the argmax, of the targe probability distribution
+#             targLabel = copy.deepcopy(targ)
+#             targLabel.drop(targLabel.columns[[0, 1]], axis=1, inplace=True)
+#             #we create a target column, with the corresponding argmax targets
+#             targ['target'] = targLabel.idxmax(axis=1)
+#             #delete the probability distribution columns
+#             for activity in idToLabel:
+#             	del targ[activity]
+#             # print(targ)
             
 
-            # print("accel")
-            # print(accel.keys())
-            # print("vid['hallway']")
-            # print(vid['hallway'].keys())
-            # print("theEND")
+#             # print("accel")
+#             # print(accel.keys())
+#             # print("vid['hallway']")
+#             # print(vid['hallway'].keys())
+#             # print("theEND")
 
-            accel.insert(0, 't', 0)
-            accel['t'] = accel.index
-            vid['hallway']['t']= vid['hallway'].index
-            vid['living_room']['t'] = vid['living_room'].index 
-            vid['kitchen']['t'] = vid['kitchen'].index 
-            merged = pd.merge(accel,vid['hallway'],how='outer',on='t')
-            merged = pd.merge(merged,vid['living_room'],how='outer',on='t')
-            merged = pd.merge(merged,vid['kitchen'],how='outer',on='t')
+#             accel.insert(0, 't', 0)
+#             accel['t'] = accel.index
+#             vid['hallway']['t']= vid['hallway'].index
+#             vid['living_room']['t'] = vid['living_room'].index 
+#             vid['kitchen']['t'] = vid['kitchen'].index 
+#             merged = pd.merge(accel,vid['hallway'],how='outer',on='t')
+#             merged = pd.merge(merged,vid['living_room'],how='outer',on='t')
+#             merged = pd.merge(merged,vid['kitchen'],how='outer',on='t')
 
-            # print ("accel.shape")
-            # print (accel.shape)
-            # print ("vid[hallway].shape")
-            # print (vid['hallway'].shape)
-            # print ("vid[living_room].shape")
-            # print (vid['living_room'].shape)
-            # print ("vid[kitchen].shape")
-            # print (vid['kitchen'].shape)
+#             # print ("accel.shape")
+#             # print (accel.shape)
+#             # print ("vid[hallway].shape")
+#             # print (vid['hallway'].shape)
+#             # print ("vid[living_room].shape")
+#             # print (vid['living_room'].shape)
+#             # print ("vid[kitchen].shape")
+#             # print (vid['kitchen'].shape)
 
-            # Rename the columns  appropriately
-            merged.columns = ['time', 'x', 'y','z', 'Kitchen_AP', 'Lounge_AP', 'Upstairs_AP',
-            'Study_AP',  'centre_2d_x_hall',  'centre_2d_y_hall' , 'bb_2d_br_x_hall'  ,'bb_2d_br_y_hall',
-            'bb_2d_tl_x_hall' , 'bb_2d_tl_y_hall' , 'centre_3d_x_hall' , 'centre_3d_y_hall' , 'centre_3d_z_hall',
-            'bb_3d_brb_x_hall' , 'bb_3d_brb_y_hall' , 'bb_3d_brb_z_hall' , 'bb_3d_flt_x_hall' , 'bb_3d_flt_y_hall',
-            'bb_3d_flt_z_hall' , 'centre_2d_x_living' , 'centre_2d_y_living' , 'bb_2d_br_x_living' , 'bb_2d_br_y_living',
-            'bb_2d_tl_x_living' , 'bb_2d_tl_y_living' , 'centre_3d_x_living' , 'centre_3d_y_living' , 'centre_3d_z_living',
-            'bb_3d_brb_x_living' , 'bb_3d_brb_y_living' ,'bb_3d_brb_z_living' , 'bb_3d_flt_x_living' , 'bb_3d_flt_y_living',
-            'bb_3d_flt_z_living' , 'centre_2d_x_kitchen' , 'centre_2d_y_kitchen' , 'bb_2d_br_x_kitchen' , 'bb_2d_br_y_kitchen',
-            'bb_2d_tl_x_kitchen' , 'bb_2d_tl_y_kitchen' , 'centre_3d_x_kitchen' , 'centre_3d_y_kitchen' , 'centre_3d_z_kitchen' , 'bb_3d_brb_x_kitchen',
-            'bb_3d_brb_y_kitchen' , 'bb_3d_brb_z_kitchen' , 'bb_3d_flt_x_kitchen' , 'bb_3d_flt_y_kitchen' , 'bb_3d_flt_z_kitchen',
-            ]
-            # pd.set_option('display.max_columns', 500)
-            # print("merged.keys()")
-            # print(merged.keys())
-            # print("merged.shape")
-            # print(merged.shape)
-            # print("merged")
-            # print(merged.ix[:5, :54])
-            # print()
+#             # Rename the columns  appropriately
+#             merged.columns = ['time', 'x', 'y','z', 'Kitchen_AP', 'Lounge_AP', 'Upstairs_AP',
+#             'Study_AP',  'centre_2d_x_hall',  'centre_2d_y_hall' , 'bb_2d_br_x_hall'  ,'bb_2d_br_y_hall',
+#             'bb_2d_tl_x_hall' , 'bb_2d_tl_y_hall' , 'centre_3d_x_hall' , 'centre_3d_y_hall' , 'centre_3d_z_hall',
+#             'bb_3d_brb_x_hall' , 'bb_3d_brb_y_hall' , 'bb_3d_brb_z_hall' , 'bb_3d_flt_x_hall' , 'bb_3d_flt_y_hall',
+#             'bb_3d_flt_z_hall' , 'centre_2d_x_living' , 'centre_2d_y_living' , 'bb_2d_br_x_living' , 'bb_2d_br_y_living',
+#             'bb_2d_tl_x_living' , 'bb_2d_tl_y_living' , 'centre_3d_x_living' , 'centre_3d_y_living' , 'centre_3d_z_living',
+#             'bb_3d_brb_x_living' , 'bb_3d_brb_y_living' ,'bb_3d_brb_z_living' , 'bb_3d_flt_x_living' , 'bb_3d_flt_y_living',
+#             'bb_3d_flt_z_living' , 'centre_2d_x_kitchen' , 'centre_2d_y_kitchen' , 'bb_2d_br_x_kitchen' , 'bb_2d_br_y_kitchen',
+#             'bb_2d_tl_x_kitchen' , 'bb_2d_tl_y_kitchen' , 'centre_3d_x_kitchen' , 'centre_3d_y_kitchen' , 'centre_3d_z_kitchen' , 'bb_3d_brb_x_kitchen',
+#             'bb_3d_brb_y_kitchen' , 'bb_3d_brb_z_kitchen' , 'bb_3d_flt_x_kitchen' , 'bb_3d_flt_y_kitchen' , 'bb_3d_flt_z_kitchen',
+#             ]
+#             # pd.set_option('display.max_columns', 500)
+#             # print("merged.keys()")
+#             # print(merged.keys())
+#             # print("merged.shape")
+#             # print(merged.shape)
+#             # print("merged")
+#             # print(merged.ix[:5, :54])
+#             # print()
 
-            #concatinate the target file labels and start,end tuples with the accelerometer timeseries.
-            # print("going for the sql table creation")
-            conn = sqlite3.connect(':memory:')
-            targ.to_sql('targ',conn,index=True)
-            merged.to_sql('merged',conn,index=True)
-            # vid['hallway'].to_sql('hall',conn,index=True)
-            # vid['living_room'].to_sql('living',conn,index=True)
-            # vid['kitchen'].to_sql('kitchen',conn,index=True)
-            # print("just did the sql table creation")
+#             #concatinate the target file labels and start,end tuples with the accelerometer timeseries.
+#             # print("going for the sql table creation")
+#             conn = sqlite3.connect(':memory:')
+#             targ.to_sql('targ',conn,index=True)
+#             merged.to_sql('merged',conn,index=True)
+#             # vid['hallway'].to_sql('hall',conn,index=True)
+#             # vid['living_room'].to_sql('living',conn,index=True)
+#             # vid['kitchen'].to_sql('kitchen',conn,index=True)
+#             # print("just did the sql table creation")
 
             
-            qry = '''
-            select 
-            time, x, y,z, Kitchen_AP, Lounge_AP, Upstairs_AP,
-            Study_AP,  centre_2d_x_hall,  centre_2d_y_hall , bb_2d_br_x_hall  ,bb_2d_br_y_hall,
-            bb_2d_tl_x_hall , bb_2d_tl_y_hall , centre_3d_x_hall , centre_3d_y_hall , centre_3d_z_hall,
-            bb_3d_brb_x_hall , bb_3d_brb_y_hall , bb_3d_brb_z_hall , bb_3d_flt_x_hall , bb_3d_flt_y_hall,
-            bb_3d_flt_z_hall , centre_2d_x_living , centre_2d_y_living , bb_2d_br_x_living , bb_2d_br_y_living,
-            bb_2d_tl_x_living , bb_2d_tl_y_living , centre_3d_x_living , centre_3d_y_living , centre_3d_z_living,
-            bb_3d_brb_x_living , bb_3d_brb_y_living ,bb_3d_brb_z_living , bb_3d_flt_x_living , bb_3d_flt_y_living,
-            bb_3d_flt_z_living , centre_2d_x_kitchen , centre_2d_y_kitchen , bb_2d_br_x_kitchen , bb_2d_br_y_kitchen,
-            bb_2d_tl_x_kitchen , bb_2d_tl_y_kitchen , centre_3d_x_kitchen , centre_3d_y_kitchen , centre_3d_z_kitchen , bb_3d_brb_x_kitchen,
-            bb_3d_brb_y_kitchen , bb_3d_brb_z_kitchen , bb_3d_flt_x_kitchen , bb_3d_flt_y_kitchen , bb_3d_flt_z_kitchen, targ.target
+#             qry = '''
+#             select 
+#             time, x, y,z, Kitchen_AP, Lounge_AP, Upstairs_AP,
+#             Study_AP,  centre_2d_x_hall,  centre_2d_y_hall , bb_2d_br_x_hall  ,bb_2d_br_y_hall,
+#             bb_2d_tl_x_hall , bb_2d_tl_y_hall , centre_3d_x_hall , centre_3d_y_hall , centre_3d_z_hall,
+#             bb_3d_brb_x_hall , bb_3d_brb_y_hall , bb_3d_brb_z_hall , bb_3d_flt_x_hall , bb_3d_flt_y_hall,
+#             bb_3d_flt_z_hall , centre_2d_x_living , centre_2d_y_living , bb_2d_br_x_living , bb_2d_br_y_living,
+#             bb_2d_tl_x_living , bb_2d_tl_y_living , centre_3d_x_living , centre_3d_y_living , centre_3d_z_living,
+#             bb_3d_brb_x_living , bb_3d_brb_y_living ,bb_3d_brb_z_living , bb_3d_flt_x_living , bb_3d_flt_y_living,
+#             bb_3d_flt_z_living , centre_2d_x_kitchen , centre_2d_y_kitchen , bb_2d_br_x_kitchen , bb_2d_br_y_kitchen,
+#             bb_2d_tl_x_kitchen , bb_2d_tl_y_kitchen , centre_3d_x_kitchen , centre_3d_y_kitchen , centre_3d_z_kitchen , bb_3d_brb_x_kitchen,
+#             bb_3d_brb_y_kitchen , bb_3d_brb_z_kitchen , bb_3d_flt_x_kitchen , bb_3d_flt_y_kitchen , bb_3d_flt_z_kitchen, targ.target
 
-            from merged join targ on merged.time between targ.start and targ.end
-            '''
-            # pd.set_option('display.max_columns', 500)
-            # print("doing the query")
-            res = pd.read_sql_query(qry,conn)
-            # print("query done")
-            # print("res.shape")
-            # print(res.shape)
-            # print("res")
-            # print(res.ix[:5, :100])
+#             from merged join targ on merged.time between targ.start and targ.end
+#             '''
+#             # pd.set_option('display.max_columns', 500)
+#             # print("doing the query")
+#             res = pd.read_sql_query(qry,conn)
+#             # print("query done")
+#             # print("res.shape")
+#             # print(res.shape)
+#             # print("res")
+#             # print(res.ix[:5, :100])
             
-            res["target"].replace(mapping, inplace=True)
-            res = res.fillna(0)
-            # print("res_after_mapping")
-            # print(res.ix[:5, :100])
+#             res["target"].replace(mapping, inplace=True)
+#             res = res.fillna(0)
+#             # print("res_after_mapping")
+#             # print(res.ix[:5, :100])
             
-            conn.close()
+#             conn.close()
             
             
-            for index, line in res.iterrows():
-            	elem = []
-            	for ind in cols:
-            		elem.append(line[ind])
-            	if sum([x=='NaN' for x in elem]) == 0:
-            		data.append([float(x) / 1000 for x in elem[:-1]])
-            		labels.append(labelToId[str(int(elem[-1]))])
+#             for index, line in res.iterrows():
+#             	elem = []
+#             	for ind in cols:
+#             		elem.append(line[ind])
+#             	if sum([x=='NaN' for x in elem]) == 0:
+#             		data.append([float(x) / 1000 for x in elem[:-1]])
+#             		labels.append(labelToId[str(int(elem[-1]))])
             	
         
-        return {'inputs': np.asarray(data), 'targets': np.asarray(labels, dtype=int)+1}
+#         return {'inputs': np.asarray(data), 'targets': np.asarray(labels, dtype=int)+1}
     
-# partial code was taken from :https://github.com/IRC-SPHERE/sphere-challenge/blob/master/visualise_data.py
-def load_wearable(path,acceleration_keys,rssi_keys):
-    accel_rssi = pd.read_csv(os.path.join(path, 'acceleration.csv'), index_col='t')
-    acceleration = accel_rssi[acceleration_keys]
-    rssi = pd.DataFrame(index=acceleration.index)
-    for kk in rssi_keys:
-        if kk in accel_rssi:
-            rssi[kk] = accel_rssi[kk]
+# # partial code was taken from :https://github.com/IRC-SPHERE/sphere-challenge/blob/master/visualise_data.py
+# def load_wearable(path,acceleration_keys,rssi_keys):
+#     accel_rssi = pd.read_csv(os.path.join(path, 'acceleration.csv'), index_col='t')
+#     acceleration = accel_rssi[acceleration_keys]
+#     rssi = pd.DataFrame(index=acceleration.index)
+#     for kk in rssi_keys:
+#         if kk in accel_rssi:
+#             rssi[kk] = accel_rssi[kk]
         
-        else:
-            rssi[kk] = np.nan
-            accel_rssi[kk] = np.nan
+#         else:
+#             rssi[kk] = np.nan
+#             accel_rssi[kk] = np.nan
     
-    accel_rssi = accel_rssi
-    return accel_rssi
+#     accel_rssi = accel_rssi
+#     return accel_rssi
 
-def load_environmental(path):
-    pir = pd.read_csv(os.path.join(path, 'pir.csv'))
-    return pir
+# def load_environmental(path):
+#     pir = pd.read_csv(os.path.join(path, 'pir.csv'))
+#     return pir
 
-def load_video(path,video_names):
-    video = dict()
-    for location in video_names:
-        filename = os.path.join(path, 'video_{}.csv'.format(location))
-        video[location] = pd.read_csv(filename, index_col='t')
-    return video
+# def load_video(path,video_names):
+#     video = dict()
+#     for location in video_names:
+#         filename = os.path.join(path, 'video_{}.csv'.format(location))
+#         video[location] = pd.read_csv(filename, index_col='t')
+#     return video
 
-def load_annotations(path):
-    num_annotators = 0
+# def load_annotations(path):
+#     num_annotators = 0
     
-    annotations = []
-    locations = []
+#     annotations = []
+#     locations = []
 
-    targets = None 
+#     targets = None 
 
-    targets_file_name = os.path.join(path, 'targets.csv')
-    if os.path.exists(targets_file_name): 
-        targets = pd.read_csv(targets_file_name)
+#     targets_file_name = os.path.join(path, 'targets.csv')
+#     if os.path.exists(targets_file_name): 
+#         targets = pd.read_csv(targets_file_name)
     
-    while True:
-        annotation_filename = "{}/annotations_{}.csv".format(path, num_annotators)
-        location_filename = "{}/location_{}.csv".format(path, num_annotators)
+#     while True:
+#         annotation_filename = "{}/annotations_{}.csv".format(path, num_annotators)
+#         location_filename = "{}/location_{}.csv".format(path, num_annotators)
         
-        if not os.path.exists(annotation_filename):
-            break
+#         if not os.path.exists(annotation_filename):
+#             break
         
-        annotations.append(pd.read_csv(annotation_filename))
-        locations.append(pd.read_csv(location_filename))
+#         annotations.append(pd.read_csv(annotation_filename))
+#         locations.append(pd.read_csv(location_filename))
         
-        num_annotators += 1
+#         num_annotators += 1
     
-    annotations_loaded = num_annotators != 0
-    return annotations
-def load_targets(path):
-    targets = None
-    targets_file_name = os.path.join(path, 'targets.csv')
-    if os.path.exists(targets_file_name): 
-        targets = pd.read_csv(targets_file_name)
-    return targets
+#     annotations_loaded = num_annotators != 0
+#     return annotations
+# def load_targets(path):
+#     targets = None
+#     targets_file_name = os.path.join(path, 'targets.csv')
+#     if os.path.exists(targets_file_name): 
+#         targets = pd.read_csv(targets_file_name)
+#     return targets
 if __name__ == "__main__":
     print('Reading %s ' % (sys.argv[1]))
     dr = data_reader(sys.argv[1])
