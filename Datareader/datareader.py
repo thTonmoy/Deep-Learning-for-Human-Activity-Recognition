@@ -169,12 +169,13 @@ class data_reader:
                 for dataset in ('train', 'test')}
         return data, idToLabel
 
+
     def readDaphFiles(self, filelist, cols, labelToId):
         data = []
         labels = []
         for i, filename in enumerate(filelist):
             print('Reading file %d of %d' % (i+1, len(filelist)))
-            with open('./dataset/%s' % filename, 'r') as f:
+            with open('dataset_fog_release/dataset/%s' % filename, 'r') as f:
                 #print "f",f
                 reader = csv.reader(f, delimiter=' ')
                 for line in reader:
@@ -244,7 +245,7 @@ class data_reader:
         labels = []
         for i, filename in enumerate(filelist):
             print('Reading file %d of %d' % (i+1, len(filelist)))
-            with open('./dataset/%s' % filename, 'r') as f:
+            with open('OpportunityUCIDataset/dataset/%s' % filename, 'r') as f:
                 reader = csv.reader(f, delimiter=' ')
                 for line in reader:
                     elem = []
