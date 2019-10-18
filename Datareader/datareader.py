@@ -77,6 +77,7 @@ class data_reader:
     def readPamap2(self):
         files = {
             'train': ['subject101.dat', 'subject102.dat','subject103.dat','subject104.dat', 'subject107.dat', 'subject108.dat', 'subject109.dat'],
+            'validation': ['subject105.dat'],
             'test': ['subject106.dat']
         }
         label_map = [
@@ -110,7 +111,7 @@ class data_reader:
                ]
         # print "cols",cols
         data = {dataset: self.readPamap2Files(files[dataset], cols, labelToId)
-                for dataset in ('train', 'test')}
+                for dataset in ('train', 'test', 'validation')}
         return data, idToLabel
 
     def readPamap2Files(self, filelist, cols, labelToId):
@@ -153,7 +154,8 @@ class data_reader:
     def readDaphnet(self):
         files = {
             'train': ['S01R01.txt', 'S01R02.txt','S03R01.txt','S03R02.txt', 'S03R03.txt', 'S04R01.txt', 'S05R01.txt', 'S05R02.txt','S06R01.txt', 'S06R02.txt', 'S07R01.txt', 'S07R02.txt', 'S08R01.txt','S10R01.txt'],
-            'test': ['S02R01.txt', 'S02R02.txt']
+            'test': ['S02R01.txt', 'S02R02.txt'],
+            'validation': ['S09R01.txt']
         }
         label_map = [
             (1, 'No freeze'),
@@ -166,7 +168,7 @@ class data_reader:
         cols = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         # print "cols",cols
         data = {dataset: self.readDaphFiles(files[dataset], cols, labelToId)
-                for dataset in ('train', 'test')}
+                for dataset in ('train', 'test', 'validation')}
         return data, idToLabel
 
 
@@ -200,7 +202,8 @@ class data_reader:
     def readOpportunity(self):
         files = {
             'train': ['S1-ADL1.dat','S1-ADL3.dat', 'S1-ADL4.dat', 'S1-ADL5.dat', 'S1-Drill.dat', 'S2-ADL1.dat', 'S2-ADL2.dat', 'S2-ADL5.dat', 'S2-Drill.dat', 'S3-ADL1.dat', 'S3-ADL2.dat', 'S3-ADL5.dat', 'S3-Drill.dat', 'S4-ADL1.dat', 'S4-ADL2.dat', 'S4-ADL3.dat', 'S4-ADL4.dat', 'S4-ADL5.dat', 'S4-Drill.dat'],
-            'test': ['S2-ADL3.dat', 'S2-ADL4.dat','S3-ADL3.dat', 'S3-ADL4.dat']
+            'test': ['S2-ADL3.dat', 'S2-ADL4.dat','S3-ADL3.dat', 'S3-ADL4.dat'],
+            'validation':['S1-ADL2.dat']
         }
         #names are from label_legend.txt of Opportunity dataset
         #except 0-ie Other, which is an additional label
@@ -234,7 +237,7 @@ class data_reader:
             ]
 
         data = {dataset: self.readOpportunityFiles(files[dataset], cols, labelToId)
-                for dataset in ('train', 'test')}
+                for dataset in ('train', 'test', 'validation')}
 
         return data, idToLabel
 
