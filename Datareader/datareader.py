@@ -140,7 +140,7 @@ class data_reader:
                     # print "elem =",elem
                     # print "elem[:-1] =",elem[:-1]
                     # print "elem[0] =",elem[0]
-                    if sum([x == 'NaN' for x in elem]) == 0:
+                    if sum([x == 'NaN' for x in elem]) < 9:
                         data.append([float(x) / 1000 for x in elem[:-1]])
                         labels.append(labelToId[elem[0]])
                         # print "[x for x in elem[:-1]]=",[x for x in elem[:-1]]
@@ -193,7 +193,7 @@ class data_reader:
                             if line[ind] == "0":
                                 continue
                         elem.append(line[ind])
-                    if sum([x == 'NaN' for x in elem]) == 0:
+                    if sum([x == 'NaN' for x in elem]) < 10:
                         data.append([float(x) / 1000 for x in elem[:-1]])
                         labels.append(labelToId[elem[-1]])
         
